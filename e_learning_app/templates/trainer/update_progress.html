@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Mettre à jour la progression{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header"><h4>Mettre à jour la progression de l'étudiant</h4></div>
+            <div class="card-body">
+                <p><strong>Étudiant :</strong> {{ enrollment.student.get_full_name }}</p>
+                <p><strong>Cours :</strong> {{ enrollment.course.name }}</p>
+                <p><strong>Progression actuelle :</strong> {{ enrollment.progress_percentage }}%</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Pourcentage de progression (0-100)</label>
+                        <input type="number" name="progress_percentage" class="form-control" 
+                               value="{{ enrollment.progress_percentage }}" min="0" max="100" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Mettre à jour</button>
+                    <a href="{% url 'trainer_view_students' %}" class="btn btn-secondary">Annuler</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

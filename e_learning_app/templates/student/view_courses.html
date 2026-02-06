@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Mes cours - IFRI{% endblock %}
+
+{% block content %}
+<section class="surface-card p-4 p-lg-5 mb-4 reveal">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div>
+            <span class="badge-soft mb-2 d-inline-flex align-items-center gap-2">
+                <i class="fas fa-book"></i> Mes cours
+            </span>
+            <h2 class="mb-2">Votre catalogue personnel</h2>
+            <p class="text-muted mb-0">Retrouvez vos formations, la progression et les actions rapides.</p>
+        </div>
+        <a href="{% url 'student_dashboard' %}" class="btn btn-outline-primary px-4">Retour dashboard</a>
+    </div>
+</section>
+
+<div class="row g-4">
+    {% for enrollment in enrollments %}
+    <div class="col-md-4">
+        <div class="course-card h-100 lift">
+            <div class="course-top">
+                <i class="fas fa-leaf fa-2x"></i>
+            </div>
+            <div class="p-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="badge-soft">{{ enrollment.get_status_display }}</span>
+                    <span class="small text-muted">{{ enrollment.progress_percentage }}%</span>
+                </div>
+                <h5 class="fw-bold mb-2">{{ enrollment.course.name }}</h5>
+                <p class="text-muted small mb-3">{{ enrollment.course.description|truncatewords:18 }}</p>
+                <p class="text-muted small mb-1"><strong>Formateur:</strong> {{ enrollment.course.trainer.get_full_name }}</p>
+                <p class="text-muted small mb-3"><strong>Duree:</strong> {{ enrollment.course.duration_weeks }} semaines</p>
+                <div class="progress mb-3">
+                    <div class="progress-bar" style="width: {{ enrollment.progress_percentage }}%"></div>
+                </div>
+                {% if enrollment.status == 'active' or enrollment.status == 'completed' %}
+                    <a href="{% url 'course_content' enrollment.course.id %}" class="btn btn-outline-primary w-100">Ouvrir le cours</a>
+                {% else %}
+                    <a href="{% url 'student_make_payment' enrollment.id %}" class="btn btn-outline-primary w-100">Finaliser le paiement</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="surface-card p-5 text-center">
+            <i class="fas fa-info-circle fa-2x text-muted mb-3"></i>
+            <p class="text-muted mb-0">Aucun cours actif. <a href="{% url 'student_dashboard' %}">Inscrivez-vous maintenant</a></p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

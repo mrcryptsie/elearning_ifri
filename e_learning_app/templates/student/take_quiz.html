@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+    .quiz-page { font-family: 'Montserrat', sans-serif; background-color: #f4f7f6; }
+    
+    /* Barre de progression et Timer fixés en haut */
+    .quiz-header-sticky {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: white;
+        border-bottom: 2px solid #0057A8;
+    }
+
+    .question-card { border-radius: 15px; border: none; margin-bottom: 2rem; }
+    
+    .choice-container {
+        border: 2px solid #eee;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+    }
+    
+    .choice-container:hover { border-color: #0057A8; background-color: #EEF6FF; }
+    .choice-container input { display: none; }
+    
+    .choice-label { width: 100%; margin-bottom: 0; cursor: pointer; display: flex; align-items: center; }
+    .choice-label::before {
+        font-family: "Font Awesome 5 Free";
+        font-weight: 400;
+        margin-right: 15px;
+        font-size: 1.2rem;
+        color: #ccc;
+    }
+
+    /* Styles spécifiques par type de question */
+    .qcu-input + .choice-label::before { content: "\f111"; } 
+    .qcu-input:checked + .choice-label::before { content: "\f192"; color: #0057A8; font-weight: 900; }
+    .qcm-input + .choice-label::before { content: "\f0c8"; } 
+    .qcm-input:checked + .choice-label::before { content: "\f14a"; color: #0057A8; font-weight: 900; }
+
+    .choice-container.selected { border-color: #0057A8; background-color: #EEF6FF; }
+
+    #timer-box { font-size: 1.5rem; font-weight: 700; color: #d63031; }
+</style>
+
+<div class="quiz-header-sticky shadow-sm p-3 mb-4">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div>
+            <h4 class="fw-bold mb-0">{{ quiz.title }}</h4>
+            <span class="badge bg-success-subtle text-success">Passage : {{ quiz.pass_mark }}%</span>
+        </div>
+        <div class="text-center">
+            <div id="timer-box" class="d-flex align-items-center">
+                <i class="fas fa-hourglass-half me-2"></i>
+                <span id="timer-display">00:00</span>
+            </div>
+            <small class="text-muted">Temps restant</small>
+        </div>
+    </div>
+</div>
+
+<div class="container py-4 quiz-page">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <form action="{% url 'submit_quiz' quiz.id %}" method="POST" id="quizForm">
+                {% csrf_token %}
+                
+                {% for question in quiz.questions.all %}
+                <div class="card question-card shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="fw-bold mb-0">
+                                <span class="text-success me-2">Q{{ forloop.counter }}.</span>
+                                {{ question.text }}
+                            </h5>
+                            <span class="badge bg-primary rounded-pill">{{ question.points }} pts</span>
+                        </div>
+                        <p class="small text-muted mb-4">
+                            ({% if question.q_type == 'qcu' %}Choix unique{% else %}Choix multiples possibles{% endif %})
+                        </p>
+                        
+                        <div class="choices-list">
+                            {% for choice in question.choices.all %}
+                            <div class="choice-container">
+                                <input type="{% if question.q_type == 'qcu' %}radio{% else %}checkbox{% endif %}" 
+                                       name="question_{{ question.id }}" 
+                                       id="choice_{{ choice.id }}" 
+                                       value="{{ choice.id }}"
+                                       class="{% if question.q_type == 'qcu' %}qcu-input{% else %}qcm-input{% endif %}"
+                                       {% if question.q_type == 'qcu' %}required{% endif %}>
+                                <label class="choice-label" for="choice_{{ choice.id }}">
+                                    {{ choice.text }}
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <div class="d-grid gap-2 mt-5 mb-5">
+                    <button type="submit" class="btn btn-success btn-lg rounded-pill shadow-lg fw-bold py-3" style="background-color: #0057A8; border: none;">
+                        <i class="fas fa-paper-plane me-2"></i> Valider mon examen
+                    </button>
+                    <a href="{% url 'course_content' quiz.lesson.course.id %}" class="btn btn-link text-muted text-decoration-none">
+                        <i class="fas fa-times me-1"></i> Abandonner
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. GESTION DU TIMER
+    let timeLeft = {{ quiz.time_limit_mins }} * 60; // Conversion minutes en secondes
+    const display = document.querySelector('#timer-display');
+    const form = document.querySelector('#quizForm');
+
+    const countdown = setInterval(function () {
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+
+        display.textContent = minutes + ":" + seconds;
+
+        if (--timeLeft < 0) {
+            clearInterval(countdown);
+            alert("Temps écoulé ! Vos réponses vont être envoyées automatiquement.");
+            form.submit(); // Soumission automatique à 00:00
+        }
+    }, 1000);
+
+    // 2. INTERACTION DES CHOIX
+    document.querySelectorAll('.choice-container').forEach(container => {
+        container.addEventListener('click', function(e) {
+            const input = this.querySelector('input');
+            
+            if (input.type === 'radio') {
+                input.checked = true;
+                const name = input.getAttribute('name');
+                document.querySelectorAll(`input[name="${name}"]`).forEach(other => {
+                    other.closest('.choice-container').classList.remove('selected');
+                });
+                this.classList.add('selected');
+            } else {
+                if (e.target !== input) { input.checked = !input.checked; }
+                this.classList.toggle('selected', input.checked);
+            }
+        });
+    });
+</script>
+{% endblock %}

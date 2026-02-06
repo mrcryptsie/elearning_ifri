@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}IFRI | Plateforme e-learning{% endblock %}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --brand-900: #003063;
+            --brand-800: #004487;
+            --brand-700: #0058ab;
+            --brand-600: #006bd0;
+            --brand-500: #007bef;
+            --brand-400: #3a98ff;
+            --brand-300: #7bb9ff;
+            --brand-100: #e6f2ff;
+            --ink-900: #0b1a2b;
+            --ink-700: #334155;
+            --ink-500: #64748b;
+            --surface: #ffffff;
+            --surface-2: #f5f9ff;
+            --shadow-sm: 0 8px 20px rgba(8, 45, 90, 0.08);
+            --shadow-md: 0 20px 45px rgba(8, 45, 90, 0.14);
+            --radius-xl: 28px;
+            --radius-lg: 22px;
+            --radius-md: 14px;
+            --font-body: "Montserrat", sans-serif;
+            --font-display: "Montserrat", sans-serif;
+        }
+
+        html, body {
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background: radial-gradient(1200px 500px at 10% -10%, rgba(0, 123, 239, 0.18), transparent 60%),
+                        radial-gradient(900px 420px at 95% 0%, rgba(0, 98, 200, 0.15), transparent 60%),
+                        var(--surface-2);
+            color: var(--ink-900);
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: radial-gradient(rgba(0, 70, 140, 0.06) 1px, transparent 1px);
+            background-size: 26px 26px;
+            opacity: 0.4;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        img, svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-display);
+            color: var(--ink-900);
+            font-weight: 700;
+        }
+
+        a {
+            color: var(--brand-700);
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: var(--brand-800);
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.9) !important;
+            border-bottom: 1px solid rgba(0, 70, 140, 0.08);
+            backdrop-filter: blur(12px);
+            padding: 0.85rem 0;
+        }
+
+        .navbar-brand {
+            font-weight: 800;
+            font-size: 1.3rem;
+            color: var(--brand-700) !important;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .brand-logo {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+        }
+
+        .brand-text small {
+            font-size: 0.65rem;
+            color: var(--ink-500);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .nav-link {
+            font-weight: 600;
+            color: var(--ink-700) !important;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--brand-700) !important;
+        }
+
+        .btn-primary,
+        .btn-success {
+            background: linear-gradient(135deg, var(--brand-700), var(--brand-500));
+            border: none;
+            font-weight: 600;
+            border-radius: 999px;
+            box-shadow: 0 10px 18px rgba(0, 123, 239, 0.25);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn-primary:hover,
+        .btn-success:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 16px 26px rgba(0, 123, 239, 0.3);
+        }
+
+        .btn-outline-primary,
+        .btn-outline-success {
+            border-radius: 999px;
+            font-weight: 600;
+            border-color: rgba(0, 123, 239, 0.4);
+            color: var(--brand-700);
+        }
+
+        .btn-outline-primary:hover,
+        .btn-outline-success:hover {
+            background: var(--brand-100);
+            border-color: var(--brand-700);
+            color: var(--brand-800);
+        }
+
+        .badge-soft {
+            background: var(--brand-100);
+            color: var(--brand-700);
+            border: 1px solid rgba(0, 123, 239, 0.2);
+            font-weight: 600;
+            padding: 0.4rem 0.8rem;
+            border-radius: 999px;
+        }
+
+        .text-success {
+            color: var(--brand-700) !important;
+        }
+
+        .bg-success {
+            background-color: var(--brand-700) !important;
+        }
+
+        .surface-card {
+            background: var(--surface);
+            border: 1px solid rgba(0, 70, 140, 0.08);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .icon-bubble {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--brand-100);
+            color: var(--brand-700);
+            font-size: 1.2rem;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(0, 70, 140, 0.08);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .hero {
+            position: relative;
+            border-radius: var(--radius-xl);
+            background: linear-gradient(135deg, #ffffff 0%, #edf5ff 100%);
+            overflow: hidden;
+            padding: 3.5rem 0;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            right: -120px;
+            top: -80px;
+            width: 360px;
+            height: 360px;
+            background: radial-gradient(circle at center, rgba(0, 123, 239, 0.35), transparent 70%);
+            z-index: 0;
+        }
+
+        .hero-inner {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-title {
+            font-size: clamp(2.2rem, 4vw, 3.5rem);
+        }
+
+        .hero-lead {
+            font-size: 1.1rem;
+            color: var(--ink-700);
+        }
+
+        .hero-card {
+            background: #ffffff;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .hero-image {
+            border-radius: var(--radius-lg);
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+            box-shadow: var(--shadow-md);
+        }
+
+        .floating-card {
+            position: absolute;
+            bottom: -20px;
+            right: 20px;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 0.85rem 1.1rem;
+            box-shadow: var(--shadow-sm);
+            animation: float 5s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        @keyframes rise {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .reveal {
+            animation: rise 0.6s ease both;
+        }
+
+        .reveal.delay-1 { animation-delay: 0.1s; }
+        .reveal.delay-2 { animation-delay: 0.2s; }
+        .reveal.delay-3 { animation-delay: 0.3s; }
+        .reveal.delay-4 { animation-delay: 0.4s; }
+
+        .pulse {
+            animation: pulse 2.6s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(0, 123, 239, 0.25); }
+            50% { box-shadow: 0 0 0 14px rgba(22, 163, 74, 0); }
+        }
+
+        .lift {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .lift:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .bleed {
+            margin-left: calc(50% - 50vw);
+            margin-right: calc(50% - 50vw);
+            padding-left: calc(50vw - 50%);
+            padding-right: calc(50vw - 50%);
+        }
+
+        .section-title {
+            font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+        }
+
+        .section-subtitle {
+            color: var(--ink-500);
+            max-width: 520px;
+        }
+
+        .course-card {
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid rgba(0, 70, 140, 0.08);
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            background: #ffffff;
+        }
+
+        .course-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .course-top {
+            background: linear-gradient(135deg, rgba(0, 91, 178, 0.95), rgba(0, 123, 239, 0.85));
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .progress {
+            height: 8px;
+            border-radius: 999px;
+        }
+
+        .progress-bar {
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--brand-700), var(--brand-500));
+        }
+
+        main.app-main {
+            flex: 1;
+            padding: 2rem 0 4rem;
+        }
+
+        footer {
+            background: #071a2f;
+            color: #dfe8df;
+            padding: 50px 0;
+            margin-top: 40px;
+        }
+
+        .footer-title {
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+        }
+
+        .alert {
+            border: none;
+            border-radius: 14px;
+            font-weight: 500;
+            box-shadow: var(--shadow-sm);
+        }
+
+        @media (max-width: 991px) {
+            .hero {
+                padding: 2.5rem 0;
+            }
+            .hero-image {
+                height: 240px;
+            }
+            .brand-text small {
+                display: none;
+            }
+            .floating-card {
+                position: static;
+                margin-top: 1rem;
+                width: fit-content;
+            }
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg sticky-top navbar-light">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <img src="{% static 'img/logoifri.png' %}" alt="IFRI" class="brand-logo">
+            <span class="brand-text">IFRI <small>E-learning</small></span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto align-items-center gap-1">
+                {% if user.is_authenticated %}
+                    {% if user.user_type == 'student' %}
+                        <li class="nav-item"><a class="nav-link px-3" href="{% url 'student_dashboard' %}">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link px-3" href="{% url 'student_view_courses' %}">Mes cours</a></li>
+                    {% elif user.user_type == 'trainer' %}
+                        <li class="nav-item"><a class="nav-link px-3" href="{% url 'trainer_dashboard' %}">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link px-3" href="{% url 'trainer_view_students' %}">Etudiants</a></li>
+                    {% elif user.user_type == 'manager' %}
+                        <li class="nav-item"><a class="nav-link px-3" href="{% url 'manager_dashboard' %}">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link px-3" href="{% url 'manager_manage_courses' %}">Cours</a></li>
+                        <li class="nav-item"><a class="nav-link px-3" href="{% url 'manager_view_feedbacks' %}">Retours</a></li>
+                    {% endif %}
+
+                    <li class="nav-item dropdown ms-lg-3">
+                        <a class="btn btn-outline-primary dropdown-toggle px-4" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-1"></i> {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+                            <li><a class="dropdown-item py-2" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt me-2 text-success"></i> Deconnexion</a></li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item"><a class="nav-link px-3" href="{% url 'login' %}">Connexion</a></li>
+                    <li class="nav-item ms-lg-2">
+                        <a class="btn btn-primary px-4" href="{% url 'student_register' %}">
+                            S'inscrire
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+    <main class="app-main">
+        <div class="container">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        <i class="fas fa-info-circle me-2"></i> {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="row align-items-start gy-4">
+                <div class="col-md-5">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <img src="{% static 'img/logoifri.png' %}" alt="IFRI" class="brand-logo">
+                        <div>
+                            <div class="footer-title">IFRI</div>
+                            <small>Institut de Formation et de Recherche en Informatique</small>
+                        </div>
+                    </div>
+                    <p class="text-white-50 small mb-0">Plateforme e-learning de l'Institut de Formation et de Recherche en Informatique (IFRI) pour former, certifier et suivre la progression.</p>
+                </div>
+                <div class="col-md-4">
+                    <div class="footer-title">Parcours</div>
+                    <p class="text-white-50 small mb-1">Apprendre a votre rythme</p>
+                    <p class="text-white-50 small mb-1">Quiz, devoirs et certificats</p>
+                    <p class="text-white-50 small mb-0">Suivi temps reel pour chaque role</p>
+                </div>
+                <div class="col-md-3 text-md-end">
+                    <div class="footer-title">Support</div>
+                    <p class="text-white-50 small mb-1">Assistance technique</p>
+                    <p class="text-white-50 small mb-0">Lun - Ven, 09h - 18h</p>
+                </div>
+            </div>
+            <div class="border-top border-light border-opacity-10 mt-4 pt-3 d-flex flex-wrap justify-content-between small text-white-50">
+                <span>&copy; 2026 IFRI E-learning. Tous droits reserves.</span>
+                <span>Plateforme e-learning IFRI.</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Attestation de Fin de Formation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* --- CONFIGURATION DE LA PAGE --- */
+        @page {
+            size: A4 landscape;
+            margin: 0; /* Important: On gère les marges en CSS pour le design full-bleed */
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background: #ffffff;
+            color: #333;
+            -webkit-print-color-adjust: exact; /* Pour Chrome/Safari */
+            print-color-adjust: exact;
+            width: 297mm;
+            height: 210mm;
+            overflow: hidden; /* Empêche le débordement sur une 2e page */
+            position: relative;
+        }
+
+        /* --- GRAPHISME LATÉRAL (Formes géométriques droites) --- */
+        .sidebar-graphic {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 25%; /* Prend environ 1/4 de la page */
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Triangle Vert Foncé (Haut) */
+        .shape-dark {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 45%;
+            background-color: #003366; /* Vert très foncé IFRI */
+            clip-path: polygon(100% 0, 0 0, 100% 100%);
+        }
+
+        /* Triangle Vert Moyen (Milieu) */
+        .shape-medium {
+            position: absolute;
+            top: 15%; /* Ajusté pour coller au design */
+            right: 0;
+            width: 120%; /* Plus large pour l'angle */
+            height: 60%;
+            background-color: #007BEF; /* Vert standard */
+            clip-path: polygon(100% 0, 0 50%, 100% 100%);
+            z-index: -1;
+            transform: translateX(10%); /* Décalage vers la droite */
+        }
+
+        /* Triangle Vert Clair (Bas) */
+        .shape-light {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 100%;
+            height: 50%;
+            background-color: #66B3FF; /* Vert clair */
+            clip-path: polygon(0 100%, 100% 0, 100% 100%);
+        }
+
+        /* --- CONTENU PRINCIPAL --- */
+        .content-container {
+            position: relative;
+            z-index: 10;
+            padding: 15mm 20mm; /* Marges internes */
+            width: 75%; /* Laisse la place au graphisme de droite */
+            height: 100%;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* --- EN-TÊTE (Logo & Badge) --- */
+        .header {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        /* Badge Vert (Étoile) */
+        .badge-icon {
+            width: 70px;
+            height: 70px;
+            margin-right: 20px;
+            /* SVG inline stylé plus bas */
+        }
+
+        .company-info {
+            margin-top: 10px;
+        }
+        .company-name {
+            font-weight: 800;
+            font-size: 20px;
+            color: #003366;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .company-slogan {
+            font-size: 10px;
+            color: #555;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* --- TITRE DU CERTIFICAT --- */
+        .main-title-block {
+            margin-top: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .attestation-title {
+            font-size: 48px; /* Très gros comme sur le PDF */
+            font-weight: 900;
+            color: #007BEF; /* Vert IFRI */
+            margin: 0;
+            letter-spacing: 2px;
+            line-height: 1;
+        }
+        
+        .attestation-subtitle {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: #666;
+            margin-top: 5px;
+            margin-left: 4px;
+        }
+
+        /* Ligne décorative */
+        .separator {
+            width: 60px;
+            height: 4px;
+            background-color: #66B3FF;
+            margin: 20px 0;
+        }
+
+        /* --- CORPS DU TEXTE (Élève & Formation) --- */
+        .body-text {
+            font-size: 16px;
+            color: #444;
+            line-height: 1.6;
+        }
+
+        .student-name {
+            display: block;
+            font-size: 32px;
+            font-weight: 700;
+            color: #003366;
+            margin: 10px 0;
+            text-transform: capitalize;
+        }
+
+        .course-name {
+            display: block;
+            font-size: 22px;
+            font-weight: 600;
+            color: #222;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        .grade-mention {
+            font-size: 14px;
+            color: #666;
+            font-style: italic;
+            margin-top: 5px;
+        }
+
+        /* --- PIED DE PAGE (Signatures & Codes) --- */
+        .footer-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: auto; /* Pousse vers le bas */
+            padding-bottom: 10mm;
+            width: 100%;
+        }
+
+        .signature-block {
+            width: 45%;
+        }
+
+        .signature-line {
+            border-top: 2px solid #ccc;
+            padding-top: 10px;
+            margin-top: 40px; /* Espace pour la signature manuscrite */
+        }
+
+        .signer-name {
+            font-weight: 700;
+            font-size: 14px;
+            color: #000;
+        }
+
+        .signer-title {
+            font-size: 12px;
+            color: #555;
+        }
+
+        .meta-info {
+            text-align: left;
+            font-size: 12px;
+            color: #555;
+        }
+
+        .verification-box {
+            margin-top: 10px;
+        }
+        .verification-code {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #333;
+        }
+
+        /* Classe utilitaire pour le SVG du badge */
+        .badge-svg {
+            fill: #66B3FF; /* Couleur du badge */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar-graphic">
+        <div class="shape-dark"></div>
+        <div class="shape-medium"></div>
+        <div class="shape-light"></div>
+    </div>
+
+    <div class="content-container">
+        
+        <div class="header">
+            <div class="badge-icon">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <path class="badge-svg" d="M50 0L61 25L88 25L75 50L88 75L61 75L50 100L39 75L12 75L25 50L12 25L39 25Z" />
+                </svg>
+            </div>
+            <div class="company-info">
+                <div class="company-name">IFRI</div>
+                <div class="company-slogan">Institut de Formation et de Recherche en Informatique</div>
+            </div>
+        </div>
+
+        <div class="main-title-block">
+            <h1 class="attestation-title">ATTESTATION</h1>
+            <div class="attestation-subtitle">DE FIN DE FORMATION</div>
+            <div class="separator"></div>
+        </div>
+
+        <div class="body-text">
+            <div>Ce document atteste que</div>
+            
+            <span class="student-name">
+                {{ student.first_name }} {{ student.last_name }}
+            </span>
+
+            <div style="margin-top: 15px;">a complété avec succès la formation de</div>
+            
+            <span class="course-name">
+                {{ course.name }}
+            </span>
+
+            <div class="grade-mention">
+                Formation validée selon les critères de l'IFRI.
+            </div>
+        </div>
+
+        <div class="footer-row">
+            
+            <div class="signature-block">
+                <div class="signature-line">
+                    <div class="signer-name">Direction de l'IFRI</div>
+                    <div class="signer-title">Institut de Formation et de Recherche en Informatique</div>
+                </div>
+            </div>
+
+            <div class="signature-block">
+                <div class="signature-line">
+                    <div class="signer-name">{{ trainer.get_full_name|default:trainer.username }}</div>
+                    <div class="signer-title">Formateur responsable</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer-row" style="padding-bottom: 0; margin-top: 10px;">
+             <div class="meta-info">
+                <div style="margin-bottom: 5px;">
+                    Fait le : <strong>{{ date|date:"d F Y" }}</strong>
+                </div>
+                <div class="verification-box">
+                    Code de vérification unique : <br>
+                    <span class="verification-code">{{ code }}</span><br>
+                    <small>Vérifiable sur la plateforme e-learning de l'IFRI</small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

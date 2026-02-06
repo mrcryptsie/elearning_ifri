@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Noter la soumission{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header"><h4>Noter la soumission</h4></div>
+            <div class="card-body">
+                <p><strong>Étudiant :</strong> {{ submission.student.get_full_name }}</p>
+                <p><strong>Devoir :</strong> {{ submission.assignment.title }}</p>
+                <p><strong>Note maximale :</strong> {{ submission.assignment.max_marks }}</p>
+                {% if submission.submission_file %}
+                    <p><strong>Fichier :</strong> <a href="{{ submission.submission_file.url }}">Télécharger</a></p>
+                {% endif %}
+                <p><strong>Texte de soumission :</strong></p>
+                <div class="border p-3 mb-3">{{ submission.submission_text|default:"Aucun texte soumis" }}</div>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Note obtenue</label>
+                        {{ form.marks_obtained }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Commentaire</label>
+                        {{ form.feedback }}
+                    </div>
+                    <button type="submit" class="btn btn-success">Enregistrer la note</button>
+                    <a href="{% url 'trainer_view_submissions' submission.assignment.id %}" class="btn btn-secondary">Annuler</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

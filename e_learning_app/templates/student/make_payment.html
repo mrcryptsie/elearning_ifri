@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Paiement sécurisé - IFRI{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+    .payment-page { font-family: 'Montserrat', sans-serif; background-color: #f8f9fa; min-height: 80vh; }
+    .payment-card { border-radius: 20px; border: none; box-shadow: 0 15px 35px rgba(0,0,0,0.1); overflow: hidden; }
+    .payment-header { background: linear-gradient(135deg, #0057A8 0%, #007BEF 100%); color: white; padding: 30px; text-align: center; }
+    .amount-badge { background: #E6F2FF; color: #007BEF; font-size: 2.2rem; font-weight: 700; padding: 15px 30px; border-radius: 15px; display: inline-block; margin: 20px 0; }
+    .fedapay-logo { height: 35px; margin-top: 10px; opacity: 0.9; }
+</style>
+
+<div class="container py-5 payment-page">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <div class="card payment-card">
+                <div class="payment-header">
+                    <i class="fas fa-lock-alt fa-3x mb-3"></i>
+                    <h3 class="fw-bold mb-0">Règlement de la formation</h3>
+                    <p class="mb-0 opacity-75">Sécurisé par cryptage SSL via FedaPay</p>
+                </div>
+
+                <div class="card-body p-5 text-center">
+                    <h6 class="text-muted mb-1 text-uppercase fw-bold small">Cours sélectionné</h6>
+                    <h4 class="fw-bold text-dark mb-4">{{ enrollment.course.name }}</h4>
+                    
+                    <div class="amount-badge">
+                        {{ enrollment.course.fee|floatformat:0 }} <small class="fs-6">XOF</small>
+                    </div>
+
+                    <div class="alert alert-warning border-0 rounded-4 small mb-4 text-start">
+                        <i class="fas fa-external-link-alt me-2"></i>
+                        Vous allez ?tre redirig? vers <strong>FedaPay</strong> pour finaliser votre paiement par <strong>Mobile Money</strong> ou <strong>Carte Bancaire</strong>.
+                    </div>
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success btn-lg w-100 rounded-pill fw-bold py-3 shadow-sm">
+                            <i class="fas fa-shield-check me-2"></i> Confirmer et payer
+                        </button>
+                    </form>
+
+                    <div class="mt-4">
+                        <img src="https://cdn.fedapay.com/img/logo-fedapay.png" alt="FedaPay" class="fedapay-logo">
+                        <p class="text-muted small mt-2">Partenaire de paiement certifi?</p>
+                    </div>
+
+                    <hr class="my-4">
+                    <a href="{% url 'student_dashboard' %}" class="btn btn-link text-secondary text-decoration-none small">
+                        <i class="fas fa-chevron-left me-1"></i> Retourner au tableau de bord
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

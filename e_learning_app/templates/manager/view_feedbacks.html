@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Voir les retours{% endblock %}
+{% block content %}
+<h2 class="mb-4"><i class="fas fa-comments"></i> Retours des étudiants</h2>
+<div class="alert alert-info">
+    <h4>Note moyenne : {{ avg_rating }} / 5.0</h4>
+</div>
+<div class="card">
+    <div class="card-body">
+        {% for feedback in feedbacks %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h6 class="mb-1">{{ feedback.student.get_full_name }}</h6>
+                        <p class="mb-1"><strong>Cours :</strong> {{ feedback.course.name }}</p>
+                        <p class="mb-1">
+                            <strong>Note :</strong>
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= feedback.rating %}
+                                    <i class="fas fa-star text-warning"></i>
+                                {% else %}
+                                    <i class="far fa-star text-warning"></i>
+                                {% endif %}
+                            {% endfor %}
+                            ({{ feedback.rating }}/5)
+                        </p>
+                        <p class="mb-0">{{ feedback.comment }}</p>
+                    </div>
+                    <small class="text-muted">{{ feedback.created_at|date:"M d, Y" }}</small>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-muted">Aucun retour pour le moment.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

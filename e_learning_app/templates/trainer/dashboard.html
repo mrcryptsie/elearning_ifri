@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard formateur - IFRI{% endblock %}
+
+{% block content %}
+<section class="surface-card p-4 p-lg-5 mb-4 reveal">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div>
+            <span class="badge-soft mb-2 d-inline-flex align-items-center gap-2">
+                <i class="fas fa-chalkboard-teacher"></i> Espace formateur
+            </span>
+            <h2 class="mb-2">Tableau de bord formateur</h2>
+            <p class="text-muted mb-0">Pilotez vos cours, suivez vos etudiants et animez les evaluations.</p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{% url 'trainer_course_create' %}" class="btn btn-primary px-4">
+                <i class="fas fa-plus-circle me-2"></i> Creer une formation
+            </a>
+            <a href="{% url 'trainer_course_list' %}" class="btn btn-outline-primary px-4">
+                Voir mon catalogue
+            </a>
+        </div>
+    </div>
+    <div class="row g-3 mt-4">
+        <div class="col-md-4">
+            <div class="stat-card lift">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-muted small">Mes cours</div>
+                        <h3 class="fw-bold mb-0">{{ courses.count }}</h3>
+                    </div>
+                    <span class="icon-bubble"><i class="fas fa-book"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card lift">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-muted small">Etudiants actifs</div>
+                        <h3 class="fw-bold mb-0">{{ total_students }}</h3>
+                    </div>
+                    <span class="icon-bubble"><i class="fas fa-users"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card lift">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-muted small">Quiz actifs</div>
+                        <h3 class="fw-bold mb-0">{{ quizzes_count|default:"0" }}</h3>
+                    </div>
+                    <span class="icon-bubble"><i class="fas fa-question-circle"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="surface-card p-4 p-lg-5 mb-4 reveal delay-1">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold mb-0">Centre de gestion</h4>
+        <span class="badge-soft">Actions rapides</span>
+    </div>
+    <div class="d-flex flex-wrap gap-3">
+        <a href="{% url 'trainer_course_list' %}" class="btn btn-outline-primary px-4">
+            <i class="fas fa-layer-group me-2"></i> Gerer mes cours
+        </a>
+        <a href="{% url 'trainer_quiz_list' %}" class="btn btn-outline-primary px-4">
+            <i class="fas fa-tasks me-2"></i> Gerer les quiz
+        </a>
+        <a href="{% url 'trainer_view_students' %}" class="btn btn-outline-primary px-4">
+            <i class="fas fa-user-graduate me-2"></i> Voir les etudiants
+        </a>
+    </div>
+</section>
+
+<section class="mb-4 reveal delay-2">
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="surface-card p-4 h-100 lift">
+                <div class="d-flex align-items-center gap-3 mb-2">
+                    <span class="icon-bubble"><i class="fas fa-bullseye"></i></span>
+                    <h5 class="fw-bold mb-0">Objectifs de la semaine</h5>
+                </div>
+                <p class="text-muted mb-0">Publier un nouveau module, activer un quiz et analyser les retours des apprenants.</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="surface-card p-4 h-100 lift">
+                <div class="d-flex align-items-center gap-3 mb-2">
+                    <span class="icon-bubble"><i class="fas fa-star"></i></span>
+                    <h5 class="fw-bold mb-0">Qualite pedagogique</h5>
+                </div>
+                <p class="text-muted mb-0">Pensez a ajouter des exemples concrets et un quiz rapide en fin de module.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="surface-card overflow-hidden reveal delay-3">
+    <div class="p-4 border-bottom">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold mb-0">Mes formations en cours</h5>
+            <a href="{% url 'trainer_course_list' %}" class="fw-bold text-decoration-none">Voir tout</a>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead class="bg-light">
+                <tr>
+                    <th class="ps-4">Formation</th>
+                    <th>Duree</th>
+                    <th>Etudiants</th>
+                    <th class="text-end pe-4">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for course in courses %}
+                <tr>
+                    <td class="ps-4">
+                        <div class="fw-bold text-dark">{{ course.name }}</div>
+                        <small class="text-muted">{{ course.lessons.count }} lecons</small>
+                    </td>
+                    <td><span class="badge-soft">{{ course.duration_weeks }} semaines</span></td>
+                    <td><i class="fas fa-user-graduate me-1 text-muted"></i> {{ course.enrollments.count }}</td>
+                    <td class="text-end pe-4">
+                        <div class="d-flex justify-content-end gap-2">
+                            <a href="{% url 'trainer_course_edit' course.id %}" class="btn btn-outline-primary btn-sm px-3">
+                                Gerer
+                            </a>
+                            <a href="{% url 'trainer_view_students' %}" class="btn btn-outline-primary btn-sm px-3">
+                                Etudiants
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center py-5 text-muted">
+                        Vous n'avez pas encore de cours. Cliquez sur "Creer une formation".
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

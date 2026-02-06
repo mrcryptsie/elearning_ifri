@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Gérer les devoirs{% endblock %}
+{% block content %}
+<h2 class="mb-4"><i class="fas fa-tasks"></i> Gérer les devoirs</h2>
+<div class="mb-3">
+    <a href="{% url 'trainer_create_assignment' %}" class="btn btn-success">Créer un nouveau devoir</a>
+</div>
+<div class="card">
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr><th>Cours</th><th>Titre</th><th>Date limite</th><th>Note maximale</th><th>Soumissions</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                {% for assignment in assignments %}
+                <tr>
+                    <td>{{ assignment.course.name }}</td>
+                    <td>{{ assignment.title }}</td>
+                    <td>{{ assignment.due_date|date:"M d, Y" }}</td>
+                    <td>{{ assignment.max_marks }}</td>
+                    <td>{{ assignment.submissions.count }}</td>
+                    <td><a href="{% url 'trainer_view_submissions' assignment.id %}" class="btn btn-sm btn-info">Voir les soumissions</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

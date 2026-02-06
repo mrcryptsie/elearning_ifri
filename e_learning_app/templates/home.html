@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Accueil - IFRI{% endblock %}
+
+{% block content %}
+<section class="hero bleed mb-5 reveal">
+    <div class="container hero-inner">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-6">
+                <span class="badge-soft mb-3 d-inline-flex align-items-center gap-2 pulse">
+                    <i class="fas fa-laptop-code"></i> Plateforme e-learning IFRI
+                </span>
+                <h1 class="hero-title mb-3">Former, certifier, innover en informatique.</h1>
+                <p class="hero-lead mb-4">
+                    La plateforme e-learning de l'Institut de Formation et de Recherche en Informatique (IFRI)
+                    pour suivre des parcours, passer des quiz, remettre des devoirs et obtenir des attestations PDF.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    {% if not user.is_authenticated %}
+                        <a href="{% url 'student_register' %}" class="btn btn-primary px-4 py-2">
+                            <i class="fas fa-user-graduate me-2"></i> Espace etudiant IFRI
+                        </a>
+                        <a href="{% url 'login' %}" class="btn btn-outline-primary px-4 py-2">
+                            <i class="fas fa-right-to-bracket me-2"></i> Acces formateur IFRI
+                        </a>
+                    {% else %}
+                        <a href="{% url 'home' %}" class="btn btn-outline-primary px-4 py-2">
+                            <i class="fas fa-compass me-2"></i> Explorer les cours
+                        </a>
+                    {% endif %}
+                </div>
+                {% if not user.is_authenticated %}
+                    <p class="text-muted small mt-3 mb-0">Comptes formateurs crees par l'administration IFRI.</p>
+                {% endif %}
+                <div class="d-flex flex-wrap gap-3 mt-4 text-muted small">
+                    <span><i class="fas fa-shield-halved me-2 text-success"></i>Paiement securise FedaPay</span>
+                    <span><i class="fas fa-chart-line me-2 text-success"></i>Suivi en temps reel</span>
+                    <span><i class="fas fa-award me-2 text-success"></i>Attestations IFRI</span>
+                </div>
+            </div>
+            <div class="col-lg-6 position-relative">
+                <img src="{% static 'img/2.jpg' %}" alt="Apprentissage IFRI" class="hero-image">
+                <div class="floating-card">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="icon-bubble"><i class="fas fa-bolt"></i></span>
+                        <div>
+                            <div class="fw-bold">Parcours IFRI</div>
+                            <small class="text-muted">Progression visible</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-card mt-4 reveal delay-2">
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <div class="fw-bold">Apercu du parcours</div>
+                        <span class="badge-soft">Exemple</span>
+                    </div>
+                    <div class="progress mb-3">
+                        <div class="progress-bar" style="width: 68%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between text-muted small">
+                        <span>Quiz termines</span>
+                        <span>4/6</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mb-5 reveal">
+    <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+        <div>
+            <h2 class="section-title mb-2">Une experience IFRI</h2>
+            <p class="section-subtitle">Des outils clairs pour apprendre, pratiquer et certifier a l'IFRI.</p>
+        </div>
+    </div>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="surface-card p-4 h-100 reveal delay-1 lift">
+                <div class="icon-bubble mb-3"><i class="fas fa-layer-group"></i></div>
+                <h5 class="fw-bold">Programmes IFRI</h5>
+                <p class="text-muted mb-0">Des modules progressifs alignes aux standards de l'IFRI, avec ressources et objectifs clairs.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="surface-card p-4 h-100 reveal delay-2 lift">
+                <div class="icon-bubble mb-3"><i class="fas fa-clipboard-check"></i></div>
+                <h5 class="fw-bold">Evaluations continues</h5>
+                <p class="text-muted mb-0">Quiz, devoirs et feedbacks pour mesurer la progression tout au long du parcours.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="surface-card p-4 h-100 reveal delay-3 lift">
+                <div class="icon-bubble mb-3"><i class="fas fa-certificate"></i></div>
+                <h5 class="fw-bold">Attestations IFRI</h5>
+                <p class="text-muted mb-0">Validez vos acquis avec des attestations PDF delivrees par l'IFRI.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mb-5 reveal">
+    <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+        <div>
+            <h2 class="section-title mb-2">Parcours d'apprentissage</h2>
+            <p class="section-subtitle">Un chemin clair, de l'inscription a la certification IFRI.</p>
+        </div>
+    </div>
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="surface-card p-4 h-100 lift">
+                <div class="icon-bubble mb-3">1</div>
+                <h6 class="fw-bold">Decouvrir</h6>
+                <p class="text-muted mb-0">Parcourez les formations et choisissez votre rythme.</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="surface-card p-4 h-100 lift">
+                <div class="icon-bubble mb-3">2</div>
+                <h6 class="fw-bold">S'inscrire</h6>
+                <p class="text-muted mb-0">Paiement securise puis acces immediat au contenu.</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="surface-card p-4 h-100 lift">
+                <div class="icon-bubble mb-3">3</div>
+                <h6 class="fw-bold">Pratiquer</h6>
+                <p class="text-muted mb-0">Quiz, devoirs et projets pour renforcer l'apprentissage.</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="surface-card p-4 h-100 lift">
+                <div class="icon-bubble mb-3">4</div>
+                <h6 class="fw-bold">Certifier</h6>
+                <p class="text-muted mb-0">Recevez un certificat PDF a la fin du parcours.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mb-5 reveal">
+    <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+        <div>
+            <h2 class="section-title mb-2">Pourquoi l'IFRI ?</h2>
+            <p class="section-subtitle">Une plateforme academique qui combine rigueur, accompagnement et innovation.</p>
+        </div>
+    </div>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="surface-card p-4 h-100 lift">
+                <div class="icon-bubble mb-3"><i class="fas fa-seedling"></i></div>
+                <h5 class="fw-bold">Exigence academique</h5>
+                <p class="text-muted mb-0">Des contenus valides par les equipes pedagogiques de l'IFRI.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="surface-card p-4 h-100 lift">
+                <div class="icon-bubble mb-3"><i class="fas fa-user-check"></i></div>
+                <h5 class="fw-bold">Pedagogie numerique</h5>
+                <p class="text-muted mb-0">Cours, quiz, devoirs et projets pour ancrer les competences informatiques.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="surface-card p-4 h-100 lift">
+                <div class="icon-bubble mb-3"><i class="fas fa-rocket"></i></div>
+                <h5 class="fw-bold">Suivi & certification</h5>
+                <p class="text-muted mb-0">Tableaux de bord, feedbacks et attestations IFRI en fin de parcours.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mb-5 reveal">
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="surface-card p-4 text-center lift">
+                <div class="fw-bold text-success fs-3">+120</div>
+                <div class="text-muted small">Modules disponibles</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="surface-card p-4 text-center lift">
+                <div class="fw-bold text-success fs-3">96%</div>
+                <div class="text-muted small">Satisfaction apprenants</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="surface-card p-4 text-center lift">
+                <div class="fw-bold text-success fs-3">+40</div>
+                <div class="text-muted small">Formateurs actifs</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="surface-card p-4 text-center lift">
+                <div class="fw-bold text-success fs-3">24/7</div>
+                <div class="text-muted small">Acces aux contenus</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mb-5 reveal">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="section-title mb-2">Cours populaires</h2>
+            <p class="section-subtitle">Une selection de formations IFRI disponibles maintenant.</p>
+        </div>
+    </div>
+    <div class="row g-4">
+        {% for course in courses %}
+        <div class="col-md-4">
+            <div class="course-card h-100 lift">
+                <div class="course-top">
+                    <i class="fas fa-laptop-code fa-2x"></i>
+                </div>
+                <div class="p-4">
+                    <h5 class="fw-bold mb-2">{{ course.name }}</h5>
+                    <p class="text-muted small mb-3">{{ course.description|truncatewords:15 }}</p>
+                    <div class="d-flex flex-column gap-2 mb-4 text-muted small">
+                        <span><i class="far fa-clock me-2"></i>Duree: {{ course.duration_weeks }} semaines</span>
+                        <span><i class="fas fa-signal me-2"></i>Niveau: {{ course.get_difficulty_level_display }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-bold text-success">{{ course.fee }} XOF</span>
+                        {% if user.is_authenticated and user.user_type == 'student' %}
+                            <a href="{% url 'student_enroll_course' course.id %}" class="btn btn-success btn-sm px-3">
+                                S'inscrire
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <div class="surface-card p-5">
+                <i class="fas fa-search fa-2x text-muted mb-3"></i>
+                <p class="text-muted mb-0">Aucun cours disponible pour le moment.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="bleed reveal">
+    <div class="surface-card p-4 p-lg-5 text-center">
+        <h3 class="fw-bold mb-3">Pret a rejoindre l'IFRI ?</h3>
+        <p class="text-muted mb-4">Rejoignez la plateforme e-learning de l'IFRI et profitez d'un parcours complet, de l'inscription a la certification.</p>
+        {% if not user.is_authenticated %}
+            <a href="{% url 'student_register' %}" class="btn btn-primary px-4 py-2">Commencer maintenant</a>
+        {% else %}
+            <a href="{% url 'student_dashboard' %}" class="btn btn-primary px-4 py-2">Aller au dashboard</a>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

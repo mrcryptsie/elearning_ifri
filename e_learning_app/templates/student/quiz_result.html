@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+    .result-page { font-family: 'Montserrat', sans-serif; background-color: #f8f9fa; }
+    
+    /* Cercle de score dynamique */
+    .score-circle {
+        width: 150px; height: 150px; border-radius: 50%;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        margin: 0 auto; border: 8px solid;
+        background-color: white;
+        transition: transform 0.3s ease;
+    }
+    .score-circle:hover { transform: scale(1.05); }
+    
+    .score-pass { border-color: #0057A8; color: #0057A8; }
+    .score-fail { border-color: #d63031; color: #d63031; }
+    
+    /* Encadré d'explication pédagogique */
+    .explanation-box { 
+        background-color: #e3f2fd; 
+        border-left: 5px solid #2196f3; 
+        padding: 15px; 
+        border-radius: 8px; 
+    }
+
+    .question-review-card {
+        border: none;
+        border-radius: 15px;
+        transition: box-shadow 0.2s;
+    }
+    .question-review-card:hover { box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important; }
+</style>
+
+<div class="container py-5 result-page">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="card border-0 shadow-lg rounded-4 mb-5 overflow-hidden">
+                <div class="card-body p-5 text-center">
+                    {% if submission.is_passed %}
+                        <div class="score-circle score-pass mb-4">
+                            <h2 class="fw-bold mb-0">{{ submission.score|floatformat:0 }}%</h2>
+                            <small class="text-uppercase fw-bold">Succès</small>
+                        </div>
+                        <h2 class="fw-bold text-success">Félicitations, {{ request.user.first_name|default:request.user.username }} !</h2>
+                        <p class="text-muted">Vous avez maîtrisé ce module avec brio.</p>
+                    {% else %}
+                        <div class="score-circle score-fail mb-4">
+                            <h2 class="fw-bold mb-0">{{ submission.score|floatformat:0 }}%</h2>
+                            <small class="text-uppercase fw-bold">Échec</small>
+                        </div>
+                        <h2 class="fw-bold text-danger">Tout près du but !</h2>
+                        <p class="text-muted">La note de passage est de <strong>{{ quiz.pass_mark }}%</strong>. Un petit effort supplémentaire et ce sera bon !</p>
+                    {% endif %}
+                    
+                    <div class="mt-4 d-flex justify-content-center gap-3">
+                        <a href="{% url 'course_content' quiz.lesson.course.id %}" class="btn btn-success rounded-pill px-4 py-2 fw-bold" style="background-color: #0057A8; border: none;">
+                            <i class="fas fa-arrow-left me-2"></i> Retour au cours
+                        </a>
+                        {% if not submission.is_passed %}
+                            <a href="{% url 'take_quiz' quiz.id %}" class="btn btn-outline-primary rounded-pill px-4 py-2 fw-bold">
+                                <i class="fas fa-redo me-2"></i> Réessayer le quiz
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center mb-4">
+                <hr class="flex-grow-1">
+                <h5 class="px-3 fw-bold text-muted text-uppercase mb-0" style="font-size: 0.8rem; letter-spacing: 2px;">Correction détaillée</h5>
+                <hr class="flex-grow-1">
+            </div>
+
+            {% for question in questions %}
+                <div class="card question-review-card shadow-sm mb-4">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="fw-bold mb-0">
+                                <span class="text-success me-2">Q{{ forloop.counter }}.</span>
+                                {{ question.text }}
+                            </h5>
+                            <span class="badge bg-light text-dark border rounded-pill">{{ question.points }} pts</span>
+                        </div>
+
+                        <div class="list-group list-group-flush mb-3">
+                            {% for choice in question.choices.all %}
+                                <div class="list-group-item border-0 px-0 d-flex align-items-center py-2">
+                                    {% if choice.is_correct %}
+                                        <div class="bg-success-subtle rounded-circle p-1 me-3">
+                                            <i class="fas fa-check text-success" style="width: 20px; text-align: center;"></i>
+                                        </div>
+                                        <span class="fw-bold text-success">{{ choice.text }} <small class="ms-2 text-muted fw-normal">(Bonne réponse)</small></span>
+                                    {% else %}
+                                        <div class="bg-light rounded-circle p-1 me-3">
+                                            <i class="far fa-circle text-muted" style="width: 20px; text-align: center;"></i>
+                                        </div>
+                                        <span class="text-muted">{{ choice.text }}</span>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        {% if question.explanation %}
+                            <div class="explanation-box mt-3 shadow-sm">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-lightbulb text-warning me-2"></i>
+                                    <small class="fw-bold text-primary text-uppercase" style="font-size: 0.7rem;">Le coin du formateur</small>
+                                </div>
+                                <p class="mb-0 small text-dark" style="line-height: 1.6;">{{ question.explanation }}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div class="text-center mt-5 mb-5">
+                <p class="text-muted small">Tentative soumise le {{ submission.submitted_at|date:"d F Y à H:i" }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Voir les soumissions{% endblock %}
+{% block content %}
+<h2 class="mb-4">Soumissions pour : {{ assignment.title }}</h2>
+<div class="card">
+    <div class="card-body">
+        <table class="table">
+            <thead>
+                <tr><th>Étudiant</th><th>Soumis le</th><th>Note</th><th>Statut</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+                {% for submission in submissions %}
+                <tr>
+                    <td>{{ submission.student.get_full_name }}</td>
+                    <td>{{ submission.submitted_at|date:"M d, Y H:i" }}</td>
+                    <td>{{ submission.marks_obtained|default:"Non noté" }} / {{ assignment.max_marks }}</td>
+                    <td>
+                        {% if submission.marks_obtained %}
+                            <span class="badge bg-success">Noté</span>
+                        {% else %}
+                            <span class="badge bg-warning">En attente</span>
+                        {% endif %}
+                    </td>
+                    <td><a href="{% url 'trainer_grade_submission' submission.id %}" class="btn btn-sm btn-primary">Noter</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

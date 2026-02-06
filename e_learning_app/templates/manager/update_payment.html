@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Mettre à jour le paiement{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header"><h4><i class="fas fa-edit"></i> Mettre à jour les détails du paiement</h4></div>
+            <div class="card-body">
+                <p><strong>Étudiant :</strong> {{ payment.enrollment.student.get_full_name }}</p>
+                <p><strong>Cours :</strong> {{ payment.enrollment.course.name }}</p>
+                <hr>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Montant (XOF)</label>
+                        {{ form.amount }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Méthode de paiement</label>
+                        {{ form.payment_method }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Statut du paiement</label>
+                        {{ form.status }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">ID transaction</label>
+                        {{ form.transaction_id }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Notes</label>
+                        {{ form.notes }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Mettre à jour</button>
+                    <a href="{% url 'manager_view_payments' %}" class="btn btn-secondary">Annuler</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

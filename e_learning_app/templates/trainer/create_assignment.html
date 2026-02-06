@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Créer un devoir{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header"><h4>Créer un nouveau devoir</h4></div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Cours</label>
+                        {{ form.course }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Titre</label>
+                        {{ form.title }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        {{ form.description }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Date limite</label>
+                        {{ form.due_date }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Note maximale</label>
+                        {{ form.max_marks }}
+                    </div>
+                    <button type="submit" class="btn btn-success">Créer le devoir</button>
+                    <a href="{% url 'trainer_manage_assignments' %}" class="btn btn-secondary">Annuler</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

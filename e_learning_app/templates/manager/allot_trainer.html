@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Assigner un formateur{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="fas fa-user-plus"></i> Assigner un formateur au cours</h4>
+            </div>
+            <div class="card-body">
+                <p><strong>Cours :</strong> {{ course.name }}</p>
+                <p><strong>Formateur actuel :</strong> 
+                    {% if course.trainer %}
+                        {{ course.trainer.get_full_name }}
+                    {% else %}
+                        <span class="text-muted">Non assigné</span>
+                    {% endif %}
+                </p>
+                <hr>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Choisir un formateur</label>
+                        {{ form.trainer }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Assigner</button>
+                    <a href="{% url 'manager_manage_courses' %}" class="btn btn-secondary">Annuler</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

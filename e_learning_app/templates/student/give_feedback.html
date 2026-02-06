@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}Donner un avis{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header"><h4>Donner un avis sur le cours</h4></div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Sélectionner un cours</label>
+                        {{ form.course }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Note (1-5)</label>
+                        {{ form.rating }}
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Commentaires</label>
+                        {{ form.comment }}
+                    </div>
+                    <button type="submit" class="btn btn-success">Envoyer l'avis</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

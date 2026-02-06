@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block title %}Gestion de mes formations - IFRI{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+    .manage-courses-page { font-family: 'Montserrat', sans-serif; background-color: #f8f9fa; min-height: 90vh; }
+    .course-card {
+        border: none;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+    .course-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.1) !important;
+    }
+    .status-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    .btn-create {
+        background: linear-gradient(45deg, #0057A8, #007BEF);
+        border: none;
+        box-shadow: 0 4px 15px rgba(27, 94, 32, 0.3);
+    }
+</style>
+
+<div class="manage-courses-page py-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <h2 class="fw-bold mb-1">Mes formations</h2>
+                <p class="text-muted">Créez et gérez votre catalogue de cours en toute autonomie.</p>
+            </div>
+            <a href="{% url 'trainer_course_create' %}" class="btn btn-success btn-lg rounded-pill px-4 btn-create">
+                <i class="fas fa-plus-circle me-2"></i> Nouveau cours
+            </a>
+        </div>
+
+        <div class="row">
+            {% for course in courses %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm course-card position-relative">
+                    {% if course.is_active %}
+                        <span class="badge bg-success status-badge rounded-pill">Actif</span>
+                    {% else %}
+                        <span class="badge bg-secondary status-badge rounded-pill">Brouillon</span>
+                    {% endif %}
+                    
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="bg-success-subtle p-3 rounded-4 d-inline-block mb-3">
+                            <i class="fas fa-layer-group fa-2x text-success"></i>
+                        </div>
+                        
+                        <h5 class="fw-bold text-dark mb-2">{{ course.name }}</h5>
+                        <p class="text-muted small flex-grow-1">
+                            {{ course.description|truncatewords:20 }}
+                        </p>
+                        
+                        <div class="mt-4 pt-3 border-top d-flex justify-content-between align-items-center">
+                            <div class="text-start">
+                                <small class="text-muted d-block">Contenu</small>
+                                <span class="fw-bold">{{ course.lessons.count }} Leçons</span>
+                            </div>
+                            <div class="text-end text-success fw-bold">
+                                {{ course.fee }} XOF
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <a href="{% url 'trainer_course_edit' course.id %}" class="btn btn-outline-primary rounded-pill fw-bold">
+                                <i class="fas fa-cog me-2"></i> Gérer le contenu
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <div class="bg-white rounded-4 p-5 shadow-sm border">
+                    <i class="fas fa-folder-open fa-4x text-muted mb-4"></i>
+                    <h4 class="fw-bold">Aucun cours créé pour le moment</h4>
+                    <p class="text-muted mb-4">Commencez à partager votre savoir en créant votre première formation.</p>
+                    <a href="{% url 'trainer_course_create' %}" class="btn btn-success rounded-pill px-5 py-2 fw-bold btn-create">
+                        Créer mon premier cours
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

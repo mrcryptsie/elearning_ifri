@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% block title %}{% if is_edit %}Modifier{% else %}Nouvelle{% endif %} Question{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <form method="POST">
+                {% csrf_token %}
+                
+                {% if form.errors or formset.non_form_errors %}
+                <div class="alert alert-danger rounded-4 shadow-sm mb-4">
+                    <h6 class="fw-bold"><i class="fas fa-exclamation-triangle me-2"></i> Erreurs à corriger :</h6>
+                    <ul class="mb-0 small">
+                        {% for field in form %}
+                            {% for error in field.errors %}<li>{{ field.label }} : {{ error }}</li>{% endfor %}
+                        {% endfor %}
+                        {% for error in formset.non_form_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <div class="card border-0 shadow rounded-4 p-4 mb-4">
+                    <h4 class="fw-bold mb-4 text-success border-bottom pb-2">
+                        <i class="fas fa-pen-nib me-2"></i> Énoncé de la question
+                    </h4>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Texte de la question</label>
+                            {{ form.text }}
+                            {% if form.text.errors %}<div class="text-danger small">{{ form.text.errors }}</div>{% endif %}
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Type de format</label>
+                            {{ form.q_type }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold">Points</label>
+                            {{ form.points }}
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-bold text-success">Position (Ordre)</label>
+                            {{ form.order }}
+                            {% if form.order.errors %}<div class="text-danger small">{{ form.order.errors }}</div>{% endif %}
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-bold text-primary">Explication (Pourquoi c'est la bonne réponse ?)</label>
+                            {{ form.explanation }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow rounded-4 p-4 mb-4">
+                    <h4 class="fw-bold mb-4 text-primary border-bottom pb-2">
+                        <i class="fas fa-list-check me-2"></i> Options de réponse
+                    </h4>
+                    
+                    {{ formset.management_form }}
+                    <div class="table-responsive">
+                        <table class="table table-borderless align-middle">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th style="width: 65%;">Texte de la proposition</th>
+                                    <th class="text-center">Réponse Correcte ?</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for f in formset %}
+                                <tr class="choice-form-row">
+                                    <td>
+                                        {{ f.id }}
+                                        {{ f.text }}
+                                        {% if f.text.errors %}
+                                            <div class="text-danger small">{{ f.text.errors }}</div>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="form-check d-inline-block">
+                                            {{ f.is_correct }}
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        {% if f.instance.pk %}
+                                            <div class="text-danger small">
+                                                {{ f.DELETE }} <i class="fas fa-trash"></i>
+                                            </div>
+                                        {% else %}
+                                            <span class="text-muted small">-</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="alert alert-info py-2 small mb-0 mt-3 rounded-3">
+                        <i class="fas fa-info-circle me-1"></i> 
+                        <strong>Note :</strong> N'oubliez pas de cocher la case "Réponse Correcte" pour au moins une proposition.
+                    </div>
+                </div>
+
+                <div class="d-flex gap-3 mt-4">
+                    <button type="submit" class="btn btn-success btn-lg rounded-pill px-5 shadow-lg fw-bold">
+                        <i class="fas fa-check-circle me-2"></i> Enregistrer la Question
+                    </button>
+                    <a href="{% url 'trainer_quiz_edit' quiz.id %}" class="btn btn-outline-secondary btn-lg rounded-pill px-4">
+                        Annuler
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control, .form-select {
+        border-radius: 10px;
+        border: 1.5px solid #eee;
+        padding: 10px 15px;
+        transition: all 0.2s;
+    }
+    .form-control:focus {
+        border-color: #0057A8;
+        box-shadow: 0 0 0 0.25rem rgba(27, 94, 32, 0.1);
+    }
+    .form-check-input:checked {
+        background-color: #0057A8;
+        border-color: #0057A8;
+    }
+    .choice-form-row:hover { background-color: #fafafa; }
+</style>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} - IFRI{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+    .form-page { font-family: 'Montserrat', sans-serif; background-color: #f8f9fa; min-height: 90vh; }
+    .card-form { border: none; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+    .form-label { font-weight: 600; color: #2d3436; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; }
+    .form-control, .form-select {
+        border-radius: 12px;
+        padding: 12px 15px;
+        border: 1.5px solid #eee;
+        transition: all 0.2s;
+    }
+    .form-control:focus {
+        border-color: #0057A8;
+        box-shadow: 0 0 0 0.25rem rgba(27, 94, 32, 0.1);
+    }
+    .btn-save {
+        background: #0057A8;
+        border: none;
+        padding: 12px 40px;
+        font-weight: 700;
+        transition: all 0.3s ease;
+    }
+    .btn-save:hover { background: #007BEF; transform: scale(1.02); }
+</style>
+
+<div class="form-page py-5">
+    <div class="container">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'trainer_course_list' %}" class="text-success text-decoration-none">Mes Formations</a></li>
+                <li class="breadcrumb-item active fw-bold">{{ title }}</li>
+            </ol>
+        </nav>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card card-form p-4 p-md-5">
+                    <div class="text-center mb-5">
+                        <div class="bg-success-subtle d-inline-block p-3 rounded-circle mb-3">
+                            <i class="fas fa-edit fa-2x text-success"></i>
+                        </div>
+                        <h2 class="fw-bold">{{ title }}</h2>
+                        <p class="text-muted">Configurez les détails principaux de votre formation.</p>
+                    </div>
+
+                    <form method="POST" novalidate>
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger rounded-4">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+
+                        <div class="row">
+                            <div class="col-12 mb-4">
+                                <label class="form-label">{{ form.name.label }}</label>
+                                {{ form.name }}
+                                {% if form.name.errors %}<div class="text-danger small mt-1 fw-bold">{{ form.name.errors }}</div>{% endif %}
+                            </div>
+
+                            <div class="col-12 mb-4">
+                                <label class="form-label">{{ form.description.label }}</label>
+                                {{ form.description }}
+                                {% if form.description.errors %}<div class="text-danger small mt-1 fw-bold">{{ form.description.errors }}</div>{% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label">{{ form.duration_weeks.label }} (Semaines)</label>
+                                {{ form.duration_weeks }}
+                                {% if form.duration_weeks.errors %}<div class="text-danger small mt-1 fw-bold">{{ form.duration_weeks.errors }}</div>{% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label">{{ form.difficulty_level.label }}</label>
+                                {{ form.difficulty_level }}
+                                {% if form.difficulty_level.errors %}<div class="text-danger small mt-1 fw-bold">{{ form.difficulty_level.errors }}</div>{% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label">Prix de la formation (XOF)</label>
+                                {{ form.fee }}
+                                {% if form.fee.errors %}<div class="text-danger small mt-1 fw-bold">{{ form.fee.errors }}</div>{% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-4 d-flex align-items-center mt-3">
+                                <div class="form-check form-switch">
+                                    {{ form.is_active }}
+                                    <label class="form-check-label fw-bold ms-2" for="{{ form.is_active.id_for_label }}">Rendre le cours public</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3 mt-4">
+                            <button type="submit" class="btn btn-success rounded-pill btn-save shadow">
+                                <i class="fas fa-check-circle me-2"></i> Valider et Continuer
+                            </button>
+                            <a href="{% url 'trainer_course_list' %}" class="btn btn-outline-secondary rounded-pill px-4 py-2">
+                                Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

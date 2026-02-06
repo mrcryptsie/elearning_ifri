@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} - IFRI{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+    .lesson-form-page { font-family: 'Montserrat', sans-serif; background-color: #f8f9fa; min-height: 90vh; }
+    .card-lesson { border: none; border-radius: 25px; }
+    .markdown-help { background-color: #E6F2FF; border-left: 5px solid #0057A8; border-radius: 10px; }
+    .form-label { font-weight: 700; color: #0057A8; font-size: 0.85rem; text-transform: uppercase; }
+    
+    /* Style zone de texte Markdown */
+    textarea.form-control {
+        font-family: 'Courier New', Courier, monospace;
+        background-color: #fafafa;
+        border: 1.5px solid #eee;
+        border-radius: 15px;
+        padding: 20px;
+    }
+    textarea.form-control:focus { border-color: #0057A8; background-color: #fff; }
+    
+    .file-upload-box {
+        border: 2px dashed #ccc;
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+        background: #fff;
+        transition: all 0.3s;
+    }
+    .file-upload-box:hover { border-color: #0057A8; background: #F0F7FF; }
+</style>
+
+<div class="lesson-form-page py-5">
+    <div class="container">
+        <div class="mb-4">
+            <a href="{% url 'trainer_course_edit' course.id %}" class="text-secondary text-decoration-none">
+                <i class="fas fa-chevron-left me-1"></i> Retour à la gestion du cours
+            </a>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8 mb-4">
+                <div class="card card-lesson shadow-lg p-4 p-md-5 bg-white">
+                    <h2 class="fw-bold mb-4">{{ title }}</h2>
+                    
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-9 mb-4">
+                                <label class="form-label">Titre du module</label>
+                                {{ form.title }}
+                            </div>
+                            
+                            <div class="col-md-3 mb-4">
+                                <label class="form-label">Position (Ordre)</label>
+                                {{ form.order }}
+                            </div>
+
+                            <div class="col-12 mb-4">
+                                <label class="form-label">Contenu pédagogique (Texte/Markdown)</label>
+                                {{ form.content_text }}
+                                <small class="text-muted mt-2 d-block">
+                                    <i class="fab fa-markdown me-1"></i> Le contenu sera automatiquement formaté pour l'élève.
+                                </small>
+                            </div>
+
+                            <div class="col-12 mb-4">
+                                <label class="form-label">Document d'accompagnement (PDF)</label>
+                                <div class="file-upload-box">
+                                    <i class="fas fa-cloud-upload-alt fa-2x text-muted mb-2"></i>
+                                    {{ form.pdf_file }}
+                                    <p class="small text-muted mt-2 mb-0">Formats acceptés : PDF uniquement.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3 mt-3">
+                            <button type="submit" class="btn btn-success rounded-pill px-5 py-2 fw-bold shadow">
+                                <i class="fas fa-save me-2"></i> Enregistrer le module
+                            </button>
+                            <a href="{% url 'trainer_course_edit' course.id %}" class="btn btn-light rounded-pill px-4 py-2 text-muted">
+                                Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 p-4 markdown-help sticky-top" style="top: 20px;">
+                    <h5 class="fw-bold mb-3"><i class="fas fa-magic me-2"></i>Aide au formatage</h5>
+                    <p class="small text-muted">Utilisez ces codes pour rendre votre cours plus beau :</p>
+                    
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><code># Titre Principal</code></li>
+                        <li class="mb-2"><code>## Sous-titre</code></li>
+                        <li class="mb-2"><code>**Texte en gras**</code></li>
+                        <li class="mb-2"><code>* Liste à puces</code></li>
+                        <li class="mb-2"><code>> Citation importante</code></li>
+                        <li class="mb-2"><code>---</code> (Ligne de séparation)</li>
+                    </ul>
+                    
+                    <div class="mt-4 p-3 bg-white rounded-3 shadow-sm">
+                        <h6 class="fw-bold small mb-2 text-dark"><i class="fas fa-lightbulb text-warning me-2"></i>Conseil</h6>
+                        <p class="small text-muted mb-0">Rédigez un contenu aéré et ajoutez un PDF récapitulatif pour aider vos élèves à réviser hors-ligne.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

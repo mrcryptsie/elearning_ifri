@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-0">Gestion des Quiz</h2>
+            <p class="text-muted">Créez et gérez les évaluations de vos cours</p>
+        </div>
+        <a href="{% url 'trainer_quiz_create' %}" class="btn btn-success rounded-pill px-4 shadow-sm">
+            <i class="fas fa-plus me-2"></i> Créer un nouveau Quiz
+        </a>
+    </div>
+
+    <div class="row">
+        {% for quiz in quizzes %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100">
+                <div class="card-body p-4 d-flex flex-column">
+                    <div class="mb-3">
+                        <span class="badge bg-success-subtle text-success rounded-pill px-3">Quiz Actif</span>
+                    </div>
+                    <h5 class="fw-bold">{{ quiz.title }}</h5>
+                    <p class="text-muted small flex-grow-1">
+                        <i class="fas fa-book me-1"></i> Leçon : {{ quiz.lesson.title }}<br>
+                        <i class="fas fa-clock me-1"></i> Durée : {{ quiz.time_limit_mins }} min
+                    </p>
+                    <div class="d-grid gap-2 mt-3">
+                        <a href="{% url 'trainer_quiz_edit' quiz.id %}" class="btn btn-primary rounded-pill btn-sm">
+                            <i class="fas fa-edit me-1"></i> Gérer les questions
+                        </a>
+                        <a href="{% url 'trainer_quiz_delete' quiz.id %}" class="btn btn-outline-danger rounded-pill btn-sm" onclick="return confirm('Supprimer définitivement ce quiz ?')">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="bg-light rounded-4 p-5">
+                <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                <h5>Aucun quiz trouvé</h5>
+                <p class="text-muted">Commencez par créer une évaluation pour l'un de vos cours.</p>
+                <a href="{% url 'trainer_quiz_create' %}" class="btn btn-success rounded-pill px-4">Créer mon premier quiz</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

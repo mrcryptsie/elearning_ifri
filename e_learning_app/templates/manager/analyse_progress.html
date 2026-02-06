@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}Analyse de progression{% endblock %}
+{% block content %}
+<h2 class="mb-4"><i class="fas fa-chart-bar"></i> Analyse de la progression des étudiants</h2>
+
+<div class="card mb-4">
+    <div class="card-header"><h5>Progression par cours</h5></div>
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Nom du cours</th>
+                    <th>Total étudiants</th>
+                    <th>Progression moyenne</th>
+                    <th>Formateur</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for course in courses %}
+                <tr>
+                    <td>{{ course.name }}</td>
+                    <td>{{ course.student_count }}</td>
+                    <td>
+                        <div class="progress" style="width: 200px;">
+                            <div class="progress-bar bg-success" style="width: {{ course.avg_progress|default:0 }}%">
+                                {{ course.avg_progress|default:0|floatformat:1 }}%
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {% if course.trainer %}
+                            {{ course.trainer.get_full_name }}
+                        {% else %}
+                            <span class="text-muted">Non assigné</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header"><h5>Progression individuelle des étudiants</h5></div>
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Nom de l'étudiant</th>
+                    <th>Cours</th>
+                    <th>Progression</th>
+                    <th>Statut</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for enrollment in enrollments %}
+                <tr>
+                    <td>{{ enrollment.student.get_full_name }}</td>
+                    <td>{{ enrollment.course.name }}</td>
+                    <td>
+                        <div class="progress" style="width: 200px;">
+                            <div class="progress-bar" style="width: {{ enrollment.progress_percentage }}%">
+                                {{ enrollment.progress_percentage }}%
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge bg-{{ enrollment.status|yesno:'success,warning,danger' }}">
+                            {{ enrollment.get_status_display }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

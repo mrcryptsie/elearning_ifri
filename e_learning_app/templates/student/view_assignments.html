@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Devoirs{% endblock %}
+{% block content %}
+<h2 class="mb-4"><i class="fas fa-tasks"></i> Mes devoirs</h2>
+<div class="card">
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Cours</th>
+                    <th>Devoir</th>
+                    <th>Date limite</th>
+                    <th>Note maximale</th>
+                    <th>Statut</th>
+                    <th>Note</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for assignment in assignments %}
+                <tr>
+                    <td>{{ assignment.course.name }}</td>
+                    <td>{{ assignment.title }}</td>
+                    <td>{{ assignment.due_date|date:"M d, Y" }}</td>
+                    <td>{{ assignment.max_marks }}</td>
+                    {% with submission=submissions|dictsortreversed:"assignment_id"|first %}
+                        {% if submission.assignment_id == assignment.id %}
+                            <td><span class="badge bg-success">Soumis</span></td>
+                            <td>{{ submission.marks_obtained|default:"En attente" }}</td>
+                            <td><span class="text-muted">Soumis</span></td>
+                        {% else %}
+                            <td><span class="badge bg-warning">En attente</span></td>
+                            <td>-</td>
+                            <td><a href="{% url 'student_submit_assignment' assignment.id %}" class="btn btn-sm btn-primary">Soumettre</a></td>
+                        {% endif %}
+                    {% endwith %}
+                </tr>
+                {% empty %}
+                <tr><td colspan="7" class="text-center">Aucun devoir disponible</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

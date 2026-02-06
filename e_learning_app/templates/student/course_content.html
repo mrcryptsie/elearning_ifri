@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ course.name }} - Sommaire{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm rounded-4 sticky-top" style="top: 20px;">
+                <div class="card-body p-4 text-center">
+                    <div class="bg-success-subtle p-4 rounded-circle d-inline-block mb-3">
+                        <i class="fas fa-graduation-cap fa-3x text-success"></i>
+                    </div>
+                    <h4 class="fw-bold">{{ course.name }}</h4>
+                    <p class="text-muted small">{{ course.description|truncatewords:20 }}</p>
+                    <hr>
+                    
+                    <div class="mb-3 text-start">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <small class="text-muted fw-bold text-uppercase" style="font-size: 0.7rem;">Votre progression</small>
+                            <span class="fw-bold text-success">{{ enrollment.progress_percentage }}%</span>
+                        </div>
+                        <div class="progress" style="height: 10px; border-radius: 10px;">
+                            <div class="progress-bar bg-success progress-bar-striped progress-bar-animated" 
+                                 role="progressbar" 
+                                 style="width: {{ enrollment.progress_percentage }}%" 
+                                 aria-valuenow="{{ enrollment.progress_percentage }}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if enrollment.progress_percentage == 100 %}
+                    <div class="alert alert-warning border-0 small mt-3 py-2 rounded-3">
+                        <i class="fas fa-award me-1"></i> Félicitations ! Votre certificat est disponible sur votre <a href="{% url 'student_dashboard' %}" class="fw-bold text-dark text-decoration-none">tableau de bord</a>.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold mb-0 text-dark">Programme de formation</h3>
+                <span class="badge bg-light text-dark border">{{ lessons.count }} Modules</span>
+            </div>
+            
+            {% if lessons %}
+                <div class="accordion shadow-sm rounded-4 overflow-hidden border-0" id="courseAccordion">
+                    {% for lesson in lessons %}
+                    <div class="accordion-item border-0 border-bottom">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed py-4" type="button" data-bs-toggle="collapse" data-bs-target="#lesson{{ lesson.id }}">
+                                <span class="bg-light text-success rounded-circle me-3 d-flex align-items-center justify-content-center fw-bold" style="width: 35px; height: 35px; flex-shrink: 0; font-size: 0.9rem;">
+                                    {% if lesson.id in completed_lesson_ids %}
+                                        <i class="fas fa-check text-success"></i>
+                                    {% else %}
+                                        {{ forloop.counter }}
+                                    {% endif %}
+                                </span>
+                                <span class="fw-bold text-dark">{{ lesson.title }}</span>
+                            </button>
+                        </h2>
+                        <div id="lesson{{ lesson.id }}" class="accordion-collapse collapse" data-bs-parent="#courseAccordion">
+                            <div class="accordion-body p-4 bg-white">
+                                <div class="mb-4">
+                                    <h6 class="fw-bold text-muted small text-uppercase mb-3">Ressources disponibles :</h6>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        {% if lesson.content_text %}<span class="badge bg-info-subtle text-info border-0"><i class="fas fa-align-left me-1"></i> Cours écrit</span>{% endif %}
+                                        {% if lesson.pdf_file %}<span class="badge bg-danger-subtle text-danger border-0"><i class="fas fa-file-pdf me-1"></i> Support PDF</span>{% endif %}
+                                        {% if lesson.quizzes.exists %}<span class="badge bg-primary-subtle text-primary border-0"><i class="fas fa-tasks me-1"></i> {{ lesson.quizzes.count }} Quiz</span>{% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex flex-wrap gap-2">
+                                    <a href="{% url 'lesson_detail' lesson.id %}" class="btn btn-dark rounded-pill px-4 fw-bold">
+                                        {% if lesson.id in completed_lesson_ids %}Revoir le module{% else %}Commencer le module{% endif %} 
+                                        <i class="fas fa-arrow-right ms-2"></i>
+                                    </a>
+
+                                    {% for quiz in lesson.quizzes.all %}
+                                        {% if quiz.id in passed_quiz_ids %}
+                                            <button class="btn btn-outline-success rounded-pill px-4 disabled">
+                                                <i class="fas fa-check-double me-2"></i> {{ quiz.title }} validé
+                                            </button>
+                                        {% else %}
+                                            <a href="{% url 'take_quiz' quiz.id %}" class="btn btn-outline-primary rounded-pill px-4 shadow-sm">
+                                                <i class="fas fa-question-circle me-2"></i> Passer {{ quiz.title }}
+                                            </a>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="text-center py-5 bg-white rounded-4 shadow-sm border border-dashed">
+                    <i class="fas fa-info-circle fa-3 text-muted mb-3 opacity-25"></i>
+                    <h5 class="text-muted fw-bold">Aucun contenu disponible</h5>
+                    <p class="small text-muted mb-0">Revenez bientôt, le formateur prépare vos leçons.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .accordion-button:not(.collapsed) {
+        background-color: #f8f9fa;
+        color: #0057A8;
+        box-shadow: none;
+    }
+    .accordion-button:focus {
+        box-shadow: none;
+        border-color: rgba(0,0,0,.125);
+    }
+    .progress-bar-animated {
+        animation: progress-bar-stripes 1s linear infinite;
+    }
+</style>
+{% endblock %}

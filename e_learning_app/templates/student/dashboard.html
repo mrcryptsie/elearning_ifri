@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard etudiant - IFRI{% endblock %}
+
+{% block extra_css %}
+<style>
+    .pending-shell {
+        background: linear-gradient(160deg, #f8fafc 0%, #ffffff 70%);
+        border: 1px solid #eef2f6;
+        box-shadow: 0 12px 24px rgba(16, 24, 40, 0.06);
+    }
+    .pending-card {
+        background: #ffffff;
+        border: 1px dashed #e5e9f0;
+        border-radius: 16px;
+        padding: 14px;
+    }
+    .pending-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff4e5;
+        color: #a65a00;
+        font-size: 16px;
+    }
+    .pending-pill {
+        background: #fff4e5;
+        color: #a65a00;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        padding: 4px 10px;
+        font-weight: 600;
+    }
+    .pending-actions .btn {
+        border-radius: 999px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="surface-card p-4 p-lg-5 mb-4 reveal">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+        <div>
+            <span class="badge-soft mb-2 d-inline-flex align-items-center gap-2">
+                <i class="fas fa-user-graduate"></i> Espace etudiant
+            </span>
+            <h2 class="mb-2">Bienvenue, {{ request.user.first_name|default:request.user.username }} !</h2>
+            <p class="text-muted mb-0">Votre parcours est pret. Reprenez vos cours et suivez vos progres.</p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{% url 'student_view_courses' %}" class="btn btn-primary px-4">Mes cours</a>
+            <a href="{% url 'student_track_progress' %}" class="btn btn-outline-primary px-4">Suivi detaille</a>
+        </div>
+    </div>
+    <div class="row g-3 mt-4">
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-muted small">Inscriptions</div>
+                        <h3 class="fw-bold mb-0">{{ enrollments.count }}</h3>
+                    </div>
+                    <span class="icon-bubble"><i class="fas fa-book"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-muted small">Cours disponibles</div>
+                        <h3 class="fw-bold mb-0">{{ available_courses.count }}</h3>
+                    </div>
+                    <span class="icon-bubble"><i class="fas fa-compass"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-muted small">Certificats</div>
+                        <h3 class="fw-bold mb-0">{{ certified_enrollments|length }}</h3>
+                    </div>
+                    <span class="icon-bubble"><i class="fas fa-certificate"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if certified_enrollments %}
+<section class="surface-card p-4 p-lg-5 mb-4 reveal delay-1">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold mb-0">Mes certificats</h4>
+        <span class="badge-soft">Documents PDF disponibles</span>
+    </div>
+    <div class="row g-3">
+        {% for enrollment in certified_enrollments %}
+        <div class="col-md-6">
+            <div class="d-flex align-items-center justify-content-between gap-3 p-3 border rounded-4 bg-white">
+                <div>
+                    <div class="fw-bold">{{ enrollment.course.name }}</div>
+                    <small class="text-muted">Certificat pret</small>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{% url 'view_certificate' enrollment.course.id %}" target="_blank" class="btn btn-outline-primary btn-sm px-3">
+                        Voir
+                    </a>
+                    <a href="{% url 'generate_certificate' enrollment.course.id %}" class="btn btn-success btn-sm px-3">
+                        PDF
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="fw-bold mb-0">Ma progression</h4>
+            <a href="{% url 'student_view_courses' %}" class="text-decoration-none fw-bold">Voir tout</a>
+        </div>
+
+        {% if enrollments %}
+            <div class="row g-4">
+                {% for enrollment in enrollments %}
+                <div class="col-md-6">
+                    <div class="surface-card p-4 h-100 lift{% if enrollment.status == 'pending' %} pending-shell{% endif %}">
+                        <h6 class="fw-bold mb-3">{{ enrollment.course.name }}</h6>
+                        {% if enrollment.status == 'active' or enrollment.status == 'completed' %}
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge-soft">
+                                    {% if enrollment.status == 'completed' %}Termine{% else %}Actif{% endif %}
+                                </span>
+                                <span class="small fw-bold">{{ enrollment.progress_percentage }}%</span>
+                            </div>
+                            <div class="progress mb-4">
+                                <div class="progress-bar" style="width: {{ enrollment.progress_percentage }}%"></div>
+                            </div>
+                            <a href="{% url 'course_content' enrollment.course.id %}" class="btn btn-outline-primary w-100">
+                                Continuer
+                            </a>
+                        {% elif enrollment.status == 'pending' %}
+                            <div class="pending-card">
+                                <div class="d-flex align-items-start justify-content-between gap-3">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <span class="pending-icon"><i class="fas fa-clock"></i></span>
+                                        <div>
+                                            <div class="fw-bold">Paiement en attente</div>
+                                            <div class="text-muted small">Votre acces se debloque des validation.</div>
+                                        </div>
+                                    </div>
+                                    <span class="pending-pill">En attente</span>
+                                </div>
+                                <div class="pending-actions mt-3 d-flex flex-wrap align-items-center gap-2">
+                                    <a href="{% url 'student_make_payment' enrollment.id %}" class="btn btn-primary btn-sm px-4">
+                                        Finaliser le paiement
+                                    </a>
+                                    <span class="text-muted small">Si besoin, verifiez vos mails.</span>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="surface-card p-5 text-center">
+                <i class="fas fa-book-open fa-2x text-muted mb-3"></i>
+                <p class="text-muted mb-0">Vous n'avez pas encore de cours. Explorez le catalogue.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="col-lg-4">
+        <div class="surface-card p-4 mb-4 reveal delay-1">
+            <h5 class="fw-bold mb-3">Actions rapides</h5>
+            <div class="d-grid gap-2">
+                <a href="{% url 'student_track_progress' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-chart-line me-2"></i> Suivi detaille
+                </a>
+                <a href="{% url 'student_give_feedback' %}" class="btn btn-outline-primary">
+                    <i class="fas fa-comment me-2"></i> Laisser un avis
+                </a>
+            </div>
+        </div>
+
+        <div class="surface-card p-4 mb-4 reveal delay-2">
+            <h5 class="fw-bold mb-3">Focus du jour</h5>
+            <div class="d-flex align-items-start gap-3">
+                <span class="icon-bubble"><i class="fas fa-lightbulb"></i></span>
+                <div>
+                    <p class="mb-1 fw-bold">Terminer un module</p>
+                    <p class="text-muted small mb-0">Un petit pas chaque jour accelere la certification.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="surface-card p-4 reveal delay-3">
+            <h5 class="fw-bold mb-3">Nouveaux cours</h5>
+            {% for course in available_courses|slice:":3" %}
+            <div class="d-flex justify-content-between align-items-center border rounded-4 p-3 mb-2 bg-white">
+                <div>
+                    <div class="fw-bold">{{ course.name }}</div>
+                    <small class="text-muted">{{ course.fee }} XOF</small>
+                </div>
+                <a href="{% url 'student_enroll_course' course.id %}" class="btn btn-success btn-sm px-3">S'inscrire</a>
+            </div>
+            {% empty %}
+            <p class="text-muted small mb-0">Aucun nouveau cours pour le moment.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
