@@ -134,6 +134,14 @@ STORAGES = {
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# Serverless filesystems are read-only; use /tmp for uploads unless S3 is configured.
+_SERVERLESS = bool(os.getenv('VERCEL')) or bool(os.getenv('VERCEL_URL'))
+_MEDIA_ROOT_ENV = os.getenv('MEDIA_ROOT')
+if _MEDIA_ROOT_ENV:
+    MEDIA_ROOT = Path(_MEDIA_ROOT_ENV)
+elif _SERVERLESS and not USE_SUPABASE_STORAGE:
+    MEDIA_ROOT = Path('/tmp') / 'media'
+
 if USE_SUPABASE_STORAGE:
     AWS_ACCESS_KEY_ID = SUPABASE_S3_ACCESS_KEY_ID
     AWS_SECRET_ACCESS_KEY = SUPABASE_S3_SECRET_ACCESS_KEY
