@@ -152,6 +152,14 @@ if USE_SUPABASE_STORAGE:
     AWS_S3_SIGNATURE_VERSION = 's3v4'
     AWS_DEFAULT_ACL = None
     AWS_QUERYSTRING_AUTH = not SUPABASE_BUCKET_PUBLIC
+    # Use Supabase public URL for file access when bucket is public.
+    AWS_S3_CUSTOM_DOMAIN = None
+    if SUPABASE_BUCKET_PUBLIC:
+        public_url = (SUPABASE_PUBLIC_URL or '').strip()
+        if not public_url and SUPABASE_URL and SUPABASE_S3_BUCKET:
+            public_url = f"{SUPABASE_URL.rstrip('/')}/storage/v1/object/public/{SUPABASE_S3_BUCKET}"
+        if public_url:
+            AWS_S3_CUSTOM_DOMAIN = public_url.replace('https://', '').replace('http://', '').rstrip('/')
     STORAGES["default"] = {
         "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
     }
